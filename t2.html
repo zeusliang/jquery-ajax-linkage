@@ -1,0 +1,100 @@
+<html>
+ <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>test vconsole log</title>
+  <script src="./vconsole.min.js"></script>
+
+  <script src="./jquery-3.3.1.js"></script>
+  <script>
+   window.vConsole = new window.VConsole();
+   //console.info("hello");
+   //console.log("ss");
+   
+   // in jquery
+   $(function(){
+    //console.log("this is jquery");
+    //var params = $("#p").value();
+    //getp(params);
+    var id = "";
+    console.log("id: "+id); 
+    get(id); 
+    $("#p").change(function(){
+	id = $(this).val();
+	console.log("onchange :"+id);
+	get(id);
+    }); 
+   });
+
+   function get(id){
+    var url,flag;
+    if(id==""){
+	url = "./getp.php";
+	flag = "false";
+	console.log("flag: "+flag);
+    }else{
+	url = "./getp.php?id="+id;
+	flag = "true";
+	console.log("flag: "+flag);
+    }
+    console.log("url: "+url);
+    $.ajax({
+     url:url,
+     success:function(result){
+	console.log("ok");
+	var pobj = JSON.parse(result);
+//	console.log(pobj[0]['id']);
+	console.log("ajax succes:"+result);
+//	console.log("select p length:"+$("#p").length);	
+	for(var i = 0; i < pobj.length; i++){
+          crt_slt(pobj[i]['id'],pobj[i]['name'],flag);
+//	 console.log(pobj[i]['id']+' '+pobj[i]['name']);
+	
+	console.log("select p length:"+$("#p").length);	
+	}
+	
+     },
+     error:function(error){
+	console.log("error");
+     }
+    });
+   }  
+  
+   function crt_slt(id,name,flag){
+    if(flag == "false"){
+     $("#p").append("<option value='"+id+"'>"+name+"</option>");    
+    }else{
+      var op_len = $("#c").find("option").length;
+	console.log("c op len:"+op_len);
+      if(op_len >= 2){     
+       //delete op
+	$("#c option").remove();
+	
+        $("#c").append("<option value='default' disable='true'>please choose</option>");    
+        $("#c").append("<option selected value='"+id+"'>"+name+"</option>");    
+      }else{
+	
+        $("#c").append("<option selected value='"+id+"'>"+name+"</option>");    
+      }
+    }
+   } 
+ 
+  </script>
+ <head>
+ <body>
+  <div>
+   <select id="p">
+   
+	<option value="default" disable="true">please choose</option>
+   </select>
+  </div>
+  
+  <div>
+   <select id="c">
+	<option value="default" disable="true">please choose</option>
+   </select>
+  </div>
+ 
+  <div id="show_msg"></div>
+
+ </body>
+</html>
