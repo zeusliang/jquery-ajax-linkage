@@ -6,25 +6,54 @@
 
   <script src="./jquery-3.3.1.js"></script>
   <script>
+   // init vconsole for debug
    window.vConsole = new window.VConsole();
-   //console.info("hello");
-   //console.log("ss");
    
-   // in jquery
+   // do sth on page loaded by jquery
    $(function(){
-    //console.log("this is jquery");
-    //var params = $("#p").value();
-    //getp(params);
+    // ajax request flag
     var id = "";
-    console.log("id: "+id); 
-    get(id); 
+
+    // send ajax for page init
+    get(id);
+
+    // listen element "select" of "#p" 
     $("#p").change(function(){
 	id = $(this).val();
-	console.log("onchange :"+id);
+
+	// get ajax data
 	get(id);
     }); 
+
+    // click button "submit" show data
+    $("#btn_sb").click(function(){
+	// call fun to show data
+	btn_clk();
+    });   
+
    });
 
+   // click button "submit" show data
+   function btn_clk(){
+	// get select "option" value and text
+	var p_val = $("#p option:selected").val();
+	var p_txt = $("#p option:selected").text();
+	console.log("p_val:"+p_val+"p_txt:"+p_txt);
+	var p_slt = "p_val:"+p_val+"p_txt:"+p_txt;
+
+	var c_val = $("#c option:selected").val();
+
+	var c_txt = $("#c option:selected").text();
+	console.log("c_val:"+c_val+"c_txt:"+c_txt);
+
+	var c_slt = "c_val:"+c_val+"c_txt:"+c_txt;
+	// apend "selected" to div
+	$("#show_msg").append(p_slt+"\n"+c_slt);	
+	console.log(p_slt+"\n"+c_slt);
+
+   } 
+
+   // get data from server by ajax
    function get(id){
     var url,flag;
     if(id==""){
@@ -36,20 +65,18 @@
 	flag = "true";
 	console.log("flag: "+flag);
     }
-    console.log("url: "+url);
+
     $.ajax({
      url:url,
      success:function(result){
 	console.log("ok");
 	var pobj = JSON.parse(result);
-//	console.log(pobj[0]['id']);
 	console.log("ajax succes:"+result);
-//	console.log("select p length:"+$("#p").length);	
-	for(var i = 0; i < pobj.length; i++){
-          crt_slt(pobj[i]['id'],pobj[i]['name'],flag);
-//	 console.log(pobj[i]['id']+' '+pobj[i]['name']);
 	
-	console.log("select p length:"+$("#p").length);	
+	// create element append to "select" for "#p"
+	for(var i = 0; i < pobj.length; i++){
+          crt_slt(pobj[i]['id'],pobj[i]['name'],flag);	
+       	  console.log("select p length:"+$("#p").length);	
 	}
 	
      },
@@ -57,8 +84,9 @@
 	console.log("error");
      }
     });
-   }  
-  
+   } 
+ 
+   // append "option" to "select"  
    function crt_slt(id,name,flag){
     if(flag == "false"){
      $("#p").append("<option value='"+id+"'>"+name+"</option>");    
@@ -93,7 +121,11 @@
 	<option value="default" disable="true">please choose</option>
    </select>
   </div>
- 
+
+  <div>
+	<input type="button" value="submit" id="btn_sb" />
+  </div>
+
   <div id="show_msg"></div>
 
  </body>
